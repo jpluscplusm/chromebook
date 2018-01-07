@@ -1,0 +1,39 @@
+# fetch data
+## hosted zoneid
+dns_zoneid="FIXME"
+
+## dns zonename
+dns_zonename="FIXME"
+
+## dns hostname
+dns_hostname="FIXME"
+
+## public IP
+public_ip=$(ec2-metadata -v | awk '{print $2'})
+
+# create json update file
+cat <<HERE >/tmp/dns-update.json
+{
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "${dns_hostname}.${dns_zonename}",
+        "Type": "A",
+        "TTL": 60,
+        "ResourceRecords": [
+          {
+            "Value": "${public_ip}"
+          }
+        ]
+      }
+    }
+  ]
+}
+HERE
+
+# API call
+
+aws route53 change-resource-record-sets \
+  --hosted-zone-id "$dns_zoneid" \
+  --change-batch file:///tmp/dns-update.json
