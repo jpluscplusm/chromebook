@@ -1,4 +1,4 @@
 curl --fail https://raw.githubusercontent.com/jpluscplusm/chromebook/master/startup/aws/rc.jcm -o /etc/rc.jcm && {
   chmod 400 /etc/rc.jcm
   . /etc/rc.jcm
-}
+} || true
